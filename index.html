@@ -12,60 +12,59 @@
       --border: #cbd5e1;
       --text: #0f172a;
       --booked-bg: #fef9c3;
-      --booked-border: #eab308;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
-    body { background-color: var(--bg); color: var(--text); padding: 24px; }
+    body { background-color: var(--bg); color: var(--text); padding: 20px; }
 
-    header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; background: var(--card-bg); padding: 20px 28px; border-radius: 12px; border: 1px solid var(--border); box-shadow: 0 2px 4px rgba(0,0,0,0.04); }
-    h1 { font-size: 1.4rem; font-weight: 700; color: #0f172a; }
+    header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; background: var(--card-bg); padding: 16px 24px; border-radius: 12px; border: 1px solid var(--border); box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+    h1 { font-size: 1.3rem; font-weight: 700; color: #0f172a; }
     
-    .nav-tabs { display: flex; gap: 10px; }
-    .tab-btn { padding: 10px 20px; border: 1px solid var(--border); background: #fff; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 0.95rem; transition: all 0.2s; }
-    .tab-btn.active { background: var(--primary); color: #fff; border-color: var(--primary); shadow: 0 2px 4px rgba(37,99,235,0.2); }
+    .nav-tabs { display: flex; gap: 8px; }
+    .tab-btn { padding: 8px 16px; border: 1px solid var(--border); background: #fff; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 0.9rem; transition: all 0.2s; }
+    .tab-btn.active { background: var(--primary); color: #fff; border-color: var(--primary); }
 
     .container { background: var(--card-bg); border-radius: 12px; border: 1px solid var(--border); overflow: hidden; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); }
 
-    /* Gantt Layout (間距加大) */
+    /* 甘特圖區塊 */
     .gantt-wrapper { display: flex; overflow-x: auto; position: relative; }
-    .gantt-sidebar { width: 400px; min-width: 400px; border-right: 2px solid var(--border); background: #fff; z-index: 10; position: sticky; left: 0; }
+    .gantt-sidebar { width: 380px; min-width: 380px; border-right: 2px solid var(--border); background: #fff; z-index: 10; position: sticky; left: 0; }
     .gantt-timeline { flex: 1; overflow-x: auto; background: #fafafa; }
 
-    .row-header { height: 52px; padding: 0 16px; display: flex; align-items: center; font-weight: 700; font-size: 0.9rem; background: #f1f5f9; border-bottom: 2px solid var(--border); color: #475569; }
-    .gantt-row { height: 56px; border-bottom: 1px solid #e2e8f0; display: flex; align-items: center; padding: 0 16px; font-size: 0.9rem; gap: 14px; transition: background 0.15s; }
+    .row-header { height: 50px; padding: 0 16px; display: flex; align-items: center; font-weight: 700; font-size: 0.85rem; background: #f1f5f9; border-bottom: 2px solid var(--border); color: #475569; }
+    .gantt-row { height: 52px; border-bottom: 1px solid #e2e8f0; display: flex; align-items: center; padding: 0 16px; font-size: 0.88rem; gap: 12px; }
     .gantt-row.booked-row { background: var(--booked-bg); }
     .gantt-row:hover { background: #f8fafc; }
 
-    /* Timeline Calendar Header (寬度拓寬為 55px) */
-    .timeline-header { display: flex; height: 52px; background: #f1f5f9; border-bottom: 2px solid var(--border); }
+    /* 時間軸抬頭 */
+    .timeline-header { display: flex; height: 50px; background: #f1f5f9; border-bottom: 2px solid var(--border); }
     .day-col { min-width: 55px; width: 55px; text-align: center; font-size: 0.8rem; border-right: 1px solid #e2e8f0; display: flex; flex-direction: column; justify-content: center; font-weight: 600; }
     .day-col.weekend { background: #fee2e2; color: #991b1b; }
 
-    /* Bar Styling */
-    .timeline-row { display: flex; height: 56px; border-bottom: 1px solid #e2e8f0; position: relative; align-items: center; }
-    .gantt-bar { position: absolute; height: 34px; border-radius: 6px; background: #3b82f6; color: #fff; font-size: 0.8rem; display: flex; align-items: center; padding: 0 10px; white-space: nowrap; box-shadow: 0 2px 4px rgba(0,0,0,0.12); font-weight: 600; cursor: pointer; z-index: 2; border: 1px solid rgba(0,0,0,0.1); }
+    /* 甘特圖條塊 */
+    .timeline-row { display: flex; height: 52px; border-bottom: 1px solid #e2e8f0; position: relative; align-items: center; }
+    .gantt-bar { position: absolute; height: 32px; border-radius: 6px; background: #3b82f6; color: #fff; font-size: 0.8rem; display: flex; align-items: center; padding: 0 10px; white-space: nowrap; box-shadow: 0 2px 4px rgba(0,0,0,0.1); font-weight: 600; cursor: pointer; z-index: 2; border: 1px solid rgba(0,0,0,0.1); }
     .gantt-bar.fast { background: #10b981; }
     .gantt-bar.slow { background: #f97316; }
     .gantt-bar.booked { background: #eab308; color: #1e1b4b; border: 1px solid #ca8a04; }
 
-    /* Cutoff Flag Indicator */
-    .cutoff-flag { position: absolute; width: 14px; height: 14px; background: #ef4444; border-radius: 50%; z-index: 3; transform: translateX(-50%); border: 2px solid #fff; box-shadow: 0 0 4px rgba(239,68,68,0.5); }
+    /* 結關點位標籤 */
+    .cutoff-flag { position: absolute; width: 12px; height: 12px; background: #ef4444; border-radius: 50%; z-index: 3; transform: translateX(-50%); border: 2px solid #fff; box-shadow: 0 0 4px rgba(239,68,68,0.5); }
 
-    /* Calendar View Styling */
-    .calendar-container { padding: 24px; }
-    .calendar-month-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; font-size: 1.2rem; font-weight: 700; }
-    .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; }
-    .cal-day-header { text-align: center; font-weight: 700; padding: 10px; background: #f1f5f9; border-radius: 6px; color: #475569; }
-    .cal-cell { min-height: 120px; background: #fff; border: 1px solid var(--border); border-radius: 8px; padding: 8px; display: flex; flex-direction: column; gap: 4px; }
-    .cal-cell .date-num { font-weight: 700; font-size: 0.85rem; color: #64748b; margin-bottom: 4px; }
-    .cal-event { font-size: 0.75rem; padding: 4px 6px; border-radius: 4px; font-weight: 600; line-height: 1.2; }
+    /* 月曆檢視區塊 */
+    .calendar-container { padding: 20px; }
+    .calendar-month-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; font-size: 1.1rem; font-weight: 700; }
+    .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; }
+    .cal-day-header { text-align: center; font-weight: 700; padding: 8px; background: #f1f5f9; border-radius: 6px; color: #475569; font-size: 0.85rem; }
+    .cal-cell { min-height: 110px; background: #fff; border: 1px solid var(--border); border-radius: 8px; padding: 6px; display: flex; flex-direction: column; gap: 4px; }
+    .cal-cell .date-num { font-weight: 700; font-size: 0.85rem; color: #64748b; margin-bottom: 2px; }
+    .cal-event { font-size: 0.72rem; padding: 3px 5px; border-radius: 4px; font-weight: 600; line-height: 1.2; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     .event-etd { background: #dbeafe; color: #1e40af; border-left: 3px solid #2563eb; }
     .event-eta { background: #dcfce7; color: #166534; border-left: 3px solid #16a34a; }
     .event-cutoff { background: #fee2e2; color: #991b1b; border-left: 3px solid #dc2626; }
 
-    .loading-overlay { padding: 60px; text-align: center; color: #64748b; font-size: 1.1rem; }
-    .checkbox-custom { width: 20px; height: 20px; cursor: pointer; }
+    .loading-overlay { padding: 50px; text-align: center; color: #64748b; font-size: 1rem; }
+    .checkbox-custom { width: 18px; height: 18px; cursor: pointer; }
   </style>
 </head>
 <body>
@@ -73,7 +72,7 @@
   <header>
     <div>
       <h1>高雄 ➔ 大阪 船班動態甘特排程</h1>
-      <p style="font-size: 0.85rem; color: #64748b; margin-top: 4px;">資料來源：Google Sheet [RAW OSAKA]</p>
+      <p style="font-size: 0.8rem; color: #64748b; margin-top: 2px;">資料來源：Google Sheet [RAW OSAKA]</p>
     </div>
     <div class="nav-tabs">
       <button class="tab-btn active" id="btnGantt" onclick="switchView('gantt')">甘特圖時間軸</button>
@@ -89,9 +88,9 @@
     <div id="ganttView" class="gantt-wrapper" style="display: none;">
       <div class="gantt-sidebar">
         <div class="row-header">
-          <span style="width: 40px;">預訂</span>
+          <span style="width: 35px;">預訂</span>
           <span style="flex: 1;">船名</span>
-          <span style="width: 100px; text-align: right;">結關日期</span>
+          <span style="width: 90px; text-align: right;">結關日期</span>
         </div>
         <div id="sidebarRows"></div>
       </div>
@@ -114,27 +113,48 @@
   </div>
 
   <script>
-    // ⚠️ 請填入您的 GAS Web App 部署網址
+    // ⚠️ 請替換為您的 GAS Web App 部署網址
     const GAS_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbxV-lxjV2EYKa4G5VFGy1nLgtUEPMwnKzNNpaq6YvnI8wCeJ31bPaiqsJaHUFoGUTGP/exec';
 
     let scheduleData = [];
-    const DAY_WIDTH = 55; // 拓寬時間軸天數寬度
-    const START_DATE = new Date('2026-10-28');
+    const DAY_WIDTH = 55;
+    const START_DATE = new Date(2026, 9, 28); // 2026-10-28
     const TOTAL_DAYS = 45; 
-    let currentCalDate = new Date('2026-11-01');
+    let currentCalDate = new Date(2026, 10, 1); // 2026-11-01
 
-    // 日期清掃函式：只保留 年-月-日 (YYYY-MM-DD)
-    function cleanDate(val) {
-      if (!val) return '';
-      const str = String(val).trim();
-      const match = str.match(/(\d{4})[\/\-](\d{1,2})[\/\-](\d{1,2})/);
+    /**
+     * 強效日期剖析器：徹底濾除時區、時間與文字
+     */
+    function parseDateClean(val) {
+      if (!val) return null;
+
+      // 1. 若輸入包含 YYYY-MM-DD 或 YYYY/MM/DD
+      const match = String(val).match(/(\d{4})[\/\-](\d{1,2})[\/\-](\d{1,2})/);
       if (match) {
-        const y = match[1];
-        const m = match[2].padStart(2, '0');
-        const d = match[3].padStart(2, '0');
-        return `${y}-${m}-${d}`;
+        const y = parseInt(match[1]);
+        const m = parseInt(match[2]);
+        const d = parseInt(match[3]);
+        return {
+          iso: `${y}-${String(m).padStart(2, '0')}-${String(d).padStart(2, '0')}`,
+          short: `${m}/${d}`,
+          dateObj: new Date(y, m - 1, d)
+        };
       }
-      return str;
+
+      // 2. 若為 JS Date 物件或長字串 (如 Thu Nov 05 2026...)
+      const d = new Date(val);
+      if (!isNaN(d.getTime())) {
+        const y = d.getFullYear();
+        const m = d.getMonth() + 1;
+        const day = d.getDate();
+        return {
+          iso: `${y}-${String(m).padStart(2, '0')}-${String(day).padStart(2, '0')}`,
+          short: `${m}/${day}`,
+          dateObj: new Date(y, m - 1, day)
+        };
+      }
+
+      return null;
     }
 
     async function fetchData() {
@@ -145,15 +165,27 @@
       try {
         const res = await fetch(GAS_WEB_APP_URL);
         const result = await res.json();
+        
         if (result.status === 'success') {
-          // 清掃所有日期
-          scheduleData = result.data.map(item => ({
-            ...item,
-            cutoff: cleanDate(item.cutoff),
-            etd: cleanDate(item.etd),
-            eta: cleanDate(item.eta),
-            actualEtd: cleanDate(item.actualEtd)
-          }));
+          // 資料轉碼與日期歸一化
+          scheduleData = result.data.map(item => {
+            const cutoffParsed = parseDateClean(item.cutoff);
+            const etdParsed = parseDateClean(item.etd);
+            const etaParsed = parseDateClean(item.eta);
+
+            return {
+              ...item,
+              cutoffIso: cutoffParsed ? cutoffParsed.iso : '',
+              etdIso: etdParsed ? etdParsed.iso : '',
+              etaIso: etaParsed ? etaParsed.iso : '',
+              etdShort: etdParsed ? etdParsed.short : '',
+              etaShort: etaParsed ? etaParsed.short : '',
+              etdDateObj: etdParsed ? etdParsed.dateObj : null,
+              etaDateObj: etaParsed ? etaParsed.dateObj : null,
+              cutoffDateObj: cutoffParsed ? cutoffParsed.dateObj : null
+            };
+          });
+
           renderGantt();
           renderCalendar();
         } else {
@@ -176,7 +208,7 @@
       document.getElementById('calendarView').style.display = view === 'calendar' ? 'block' : 'none';
     }
 
-    /* === 甘特圖渲染邏輯 === */
+    /* === 甘特圖視圖 === */
     function renderGantt() {
       renderHeader();
       renderSidebar();
@@ -212,7 +244,7 @@
         row.innerHTML = `
           <input type="checkbox" class="checkbox-custom" ${item.booked ? 'checked' : ''} onchange="toggleBooking(${item.rowIndex}, this.checked)">
           <span style="flex: 1; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="${item.vessel}">${item.vessel}</span>
-          <span style="width: 100px; text-align: right; color: #64748b; font-size: 0.8rem; font-weight: 500;">${item.cutoff || '-'}</span>
+          <span style="width: 90px; text-align: right; color: #64748b; font-size: 0.82rem;">${item.cutoffIso || '-'}</span>
         `;
         sidebarEl.appendChild(row);
       });
@@ -233,13 +265,10 @@
           row.appendChild(bgGrid);
         }
 
-        // 甘特條 (ETD -> ETA)
-        if (item.etd && item.eta) {
-          const etdDate = new Date(item.etd);
-          const etaDate = new Date(item.eta);
-          
-          const offsetDays = Math.round((etdDate - START_DATE) / (1000 * 60 * 60 * 24));
-          const durationDays = Math.max(1, Math.round((etaDate - etdDate) / (1000 * 60 * 60 * 24)));
+        // 甘特條 (以精簡格式顯示：🚢 船名 (5天 | 11/2-11/6))
+        if (item.etdDateObj && item.etaDateObj) {
+          const offsetDays = Math.round((item.etdDateObj - START_DATE) / (1000 * 60 * 60 * 24));
+          const durationDays = Math.max(1, Math.round((item.etaDateObj - item.etdDateObj) / (1000 * 60 * 60 * 24)));
 
           if (offsetDays >= 0) {
             const bar = document.createElement('div');
@@ -249,20 +278,19 @@
             bar.className = `gantt-bar ${speedClass}`;
             bar.style.left = `${offsetDays * DAY_WIDTH + 4}px`;
             bar.style.width = `${durationDays * DAY_WIDTH - 8}px`;
-            bar.innerHTML = `🚢 ${item.vessel} (${item.duration}天 | ${item.etd} ➔ ${item.eta})`;
+            bar.innerHTML = `🚢 ${item.vessel} (${item.duration}天 | ${item.etdShort}-${item.etaShort})`;
             row.appendChild(bar);
           }
         }
 
         // 結關紅點
-        if (item.cutoff) {
-          const cutoffDate = new Date(item.cutoff);
-          const cutoffOffset = Math.round((cutoffDate - START_DATE) / (1000 * 60 * 60 * 24));
+        if (item.cutoffDateObj) {
+          const cutoffOffset = Math.round((item.cutoffDateObj - START_DATE) / (1000 * 60 * 60 * 24));
           if (cutoffOffset >= 0) {
             const flag = document.createElement('div');
             flag.className = 'cutoff-flag';
             flag.style.left = `${cutoffOffset * DAY_WIDTH + (DAY_WIDTH / 2)}px`;
-            flag.title = `結關日: ${item.cutoff}`;
+            flag.title = `結關日: ${item.cutoffIso}`;
             row.appendChild(flag);
           }
         }
@@ -271,7 +299,7 @@
       });
     }
 
-    /* === 月曆視圖渲染邏輯 === */
+    /* === 月曆視圖 === */
     function changeMonth(delta) {
       currentCalDate.setMonth(currentCalDate.getMonth() + delta);
       renderCalendar();
@@ -285,7 +313,7 @@
       const month = currentCalDate.getMonth();
       document.getElementById('calendarMonthTitle').innerText = `${year} 年 ${month + 1} 月`;
 
-      // 標頭 星期日 ~ 星期六
+      // 星期標頭
       ['日', '一', '二', '三', '四', '五', '六'].forEach(d => {
         const h = document.createElement('div');
         h.className = 'cal-day-header';
@@ -296,7 +324,7 @@
       const firstDay = new Date(year, month, 1).getDay();
       const daysInMonth = new Date(year, month + 1, 0).getDate();
 
-      // 補前補白格
+      // 月前空白格
       for (let i = 0; i < firstDay; i++) {
         const emptyCell = document.createElement('div');
         emptyCell.className = 'cal-cell';
@@ -304,7 +332,7 @@
         grid.appendChild(emptyCell);
       }
 
-      // 渲染每天格子
+      // 渲染日期格與對應船班
       for (let day = 1; day <= daysInMonth; day++) {
         const cell = document.createElement('div');
         cell.className = 'cal-cell';
@@ -315,16 +343,16 @@
 
         cell.innerHTML = `<div class="date-num">${day} 日</div>`;
 
-        // 抓取當天事件
+        // 準確比對日期與卡片填入
         scheduleData.forEach(item => {
-          if (item.cutoff === dateKey) {
-            cell.innerHTML += `<div class="cal-event event-cutoff">🚩 結關: ${item.vessel}</div>`;
+          if (item.cutoffIso === dateKey) {
+            cell.innerHTML += `<div class="cal-event event-cutoff" title="結關: ${item.vessel}">🚩 結關: ${item.vessel}</div>`;
           }
-          if (item.etd === dateKey) {
-            cell.innerHTML += `<div class="cal-event event-etd">🚢 開船: ${item.vessel}</div>`;
+          if (item.etdIso === dateKey) {
+            cell.innerHTML += `<div class="cal-event event-etd" title="開船: ${item.vessel}">🚢 開船: ${item.vessel}</div>`;
           }
-          if (item.eta === dateKey) {
-            cell.innerHTML += `<div class="cal-event event-eta">🛬 抵港: ${item.vessel}</div>`;
+          if (item.etaIso === dateKey) {
+            cell.innerHTML += `<div class="cal-event event-eta" title="抵港: ${item.vessel}">🛬 抵港: ${item.vessel}</div>`;
           }
         });
 
