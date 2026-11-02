@@ -9,51 +9,63 @@
       --primary: #2563eb;
       --bg: #f8fafc;
       --card-bg: #ffffff;
-      --border: #e2e8f0;
-      --text: #1e293b;
-      --accent-booked: #fef08a;
-      --accent-booked-border: #eab308;
+      --border: #cbd5e1;
+      --text: #0f172a;
+      --booked-bg: #fef9c3;
+      --booked-border: #eab308;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
-    body { background-color: var(--bg); color: var(--text); padding: 20px; }
+    body { background-color: var(--bg); color: var(--text); padding: 24px; }
 
-    header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; background: var(--card-bg); padding: 16px 24px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
-    h1 { font-size: 1.25rem; font-weight: 700; color: #0f172a; }
+    header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; background: var(--card-bg); padding: 20px 28px; border-radius: 12px; border: 1px solid var(--border); box-shadow: 0 2px 4px rgba(0,0,0,0.04); }
+    h1 { font-size: 1.4rem; font-weight: 700; color: #0f172a; }
     
-    .nav-tabs { display: flex; gap: 8px; }
-    .tab-btn { padding: 8px 16px; border: 1px solid var(--border); background: #fff; border-radius: 6px; cursor: pointer; font-weight: 500; transition: all 0.2s; }
-    .tab-btn.active { background: var(--primary); color: #fff; border-color: var(--primary); }
+    .nav-tabs { display: flex; gap: 10px; }
+    .tab-btn { padding: 10px 20px; border: 1px solid var(--border); background: #fff; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 0.95rem; transition: all 0.2s; }
+    .tab-btn.active { background: var(--primary); color: #fff; border-color: var(--primary); shadow: 0 2px 4px rgba(37,99,235,0.2); }
 
-    .container { background: var(--card-bg); border-radius: 8px; border: 1px solid var(--border); overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+    .container { background: var(--card-bg); border-radius: 12px; border: 1px solid var(--border); overflow: hidden; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); }
 
-    /* Gantt Layout */
+    /* Gantt Layout (間距加大) */
     .gantt-wrapper { display: flex; overflow-x: auto; position: relative; }
-    .gantt-sidebar { width: 340px; min-width: 340px; border-right: 2px solid var(--border); background: #fff; z-index: 10; position: sticky; left: 0; }
+    .gantt-sidebar { width: 400px; min-width: 400px; border-right: 2px solid var(--border); background: #fff; z-index: 10; position: sticky; left: 0; }
     .gantt-timeline { flex: 1; overflow-x: auto; background: #fafafa; }
 
-    .row-header { height: 44px; padding: 0 12px; display: flex; align-items: center; font-weight: 600; font-size: 0.85rem; background: #f1f5f9; border-bottom: 1px solid var(--border); }
-    .gantt-row { height: 48px; border-bottom: 1px solid var(--border); display: flex; align-items: center; padding: 0 12px; font-size: 0.85rem; gap: 10px; transition: background 0.15s; }
-    .gantt-row.booked-row { background: #fefce8; }
+    .row-header { height: 52px; padding: 0 16px; display: flex; align-items: center; font-weight: 700; font-size: 0.9rem; background: #f1f5f9; border-bottom: 2px solid var(--border); color: #475569; }
+    .gantt-row { height: 56px; border-bottom: 1px solid #e2e8f0; display: flex; align-items: center; padding: 0 16px; font-size: 0.9rem; gap: 14px; transition: background 0.15s; }
+    .gantt-row.booked-row { background: var(--booked-bg); }
     .gantt-row:hover { background: #f8fafc; }
 
-    /* Timeline Calendar Header */
-    .timeline-header { display: flex; height: 44px; background: #f1f5f9; border-bottom: 1px solid var(--border); }
-    .day-col { min-width: 40px; width: 40px; text-align: center; font-size: 0.75rem; border-right: 1px solid #e2e8f0; display: flex; flex-direction: column; justify-content: center; }
-    .day-col.weekend { background: #f1f5f9; color: #ef4444; }
+    /* Timeline Calendar Header (寬度拓寬為 55px) */
+    .timeline-header { display: flex; height: 52px; background: #f1f5f9; border-bottom: 2px solid var(--border); }
+    .day-col { min-width: 55px; width: 55px; text-align: center; font-size: 0.8rem; border-right: 1px solid #e2e8f0; display: flex; flex-direction: column; justify-content: center; font-weight: 600; }
+    .day-col.weekend { background: #fee2e2; color: #991b1b; }
 
     /* Bar Styling */
-    .timeline-row { display: flex; height: 48px; border-bottom: 1px solid var(--border); position: relative; align-items: center; }
-    .gantt-bar { position: absolute; height: 26px; border-radius: 4px; background: #3b82f6; color: #fff; font-size: 0.75rem; display: flex; align-items: center; padding: 0 8px; white-space: nowrap; box-shadow: 0 2px 4px rgba(0,0,0,0.1); font-weight: 600; cursor: pointer; z-index: 2; }
-    .gantt-bar.fast { background: #10b981; } /* 4天 */
-    .gantt-bar.slow { background: #f97316; } /* 6+天 */
-    .gantt-bar.booked { background: #eab308; color: #000; border: 1px solid #ca8a04; }
+    .timeline-row { display: flex; height: 56px; border-bottom: 1px solid #e2e8f0; position: relative; align-items: center; }
+    .gantt-bar { position: absolute; height: 34px; border-radius: 6px; background: #3b82f6; color: #fff; font-size: 0.8rem; display: flex; align-items: center; padding: 0 10px; white-space: nowrap; box-shadow: 0 2px 4px rgba(0,0,0,0.12); font-weight: 600; cursor: pointer; z-index: 2; border: 1px solid rgba(0,0,0,0.1); }
+    .gantt-bar.fast { background: #10b981; }
+    .gantt-bar.slow { background: #f97316; }
+    .gantt-bar.booked { background: #eab308; color: #1e1b4b; border: 1px solid #ca8a04; }
 
     /* Cutoff Flag Indicator */
-    .cutoff-flag { position: absolute; width: 12px; height: 12px; background: #ef4444; border-radius: 50%; z-index: 3; transform: translateX(-50%); border: 2px solid #fff; }
+    .cutoff-flag { position: absolute; width: 14px; height: 14px; background: #ef4444; border-radius: 50%; z-index: 3; transform: translateX(-50%); border: 2px solid #fff; box-shadow: 0 0 4px rgba(239,68,68,0.5); }
 
-    .loading-overlay { padding: 40px; text-align: center; color: #64748b; }
-    .checkbox-custom { width: 18px; height: 18px; cursor: pointer; }
+    /* Calendar View Styling */
+    .calendar-container { padding: 24px; }
+    .calendar-month-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; font-size: 1.2rem; font-weight: 700; }
+    .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; }
+    .cal-day-header { text-align: center; font-weight: 700; padding: 10px; background: #f1f5f9; border-radius: 6px; color: #475569; }
+    .cal-cell { min-height: 120px; background: #fff; border: 1px solid var(--border); border-radius: 8px; padding: 8px; display: flex; flex-direction: column; gap: 4px; }
+    .cal-cell .date-num { font-weight: 700; font-size: 0.85rem; color: #64748b; margin-bottom: 4px; }
+    .cal-event { font-size: 0.75rem; padding: 4px 6px; border-radius: 4px; font-weight: 600; line-height: 1.2; }
+    .event-etd { background: #dbeafe; color: #1e40af; border-left: 3px solid #2563eb; }
+    .event-eta { background: #dcfce7; color: #166534; border-left: 3px solid #16a34a; }
+    .event-cutoff { background: #fee2e2; color: #991b1b; border-left: 3px solid #dc2626; }
+
+    .loading-overlay { padding: 60px; text-align: center; color: #64748b; font-size: 1.1rem; }
+    .checkbox-custom { width: 20px; height: 20px; cursor: pointer; }
   </style>
 </head>
 <body>
@@ -61,56 +73,94 @@
   <header>
     <div>
       <h1>高雄 ➔ 大阪 船班動態甘特排程</h1>
-      <p style="font-size: 0.8rem; color: #64748b; margin-top: 4px;">勾選時會自動同步回 Google Sheet 試算表</p>
+      <p style="font-size: 0.85rem; color: #64748b; margin-top: 4px;">資料來源：Google Sheet [RAW OSAKA]</p>
     </div>
     <div class="nav-tabs">
-      <button class="tab-btn active" onclick="switchView('gantt')">甘特圖視圖</button>
+      <button class="tab-btn active" id="btnGantt" onclick="switchView('gantt')">甘特圖時間軸</button>
+      <button class="tab-btn" id="btnCalendar" onclick="switchView('calendar')">月曆檢視</button>
       <button class="tab-btn" onclick="fetchData()">重新整理 🔄</button>
     </div>
   </header>
 
   <div class="container">
-    <div id="loading" class="loading-overlay">載入 Google Sheet 最新資料中...</div>
+    <div id="loading" class="loading-overlay">載入最新船班資料中...</div>
+
+    <!-- 甘特圖視圖 -->
     <div id="ganttView" class="gantt-wrapper" style="display: none;">
-      <!-- 左側固定列表 -->
       <div class="gantt-sidebar">
         <div class="row-header">
-          <span style="width: 30px;">預訂</span>
+          <span style="width: 40px;">預訂</span>
           <span style="flex: 1;">船名</span>
-          <span style="width: 80px; text-align: right;">結關日</span>
+          <span style="width: 100px; text-align: right;">結關日期</span>
         </div>
         <div id="sidebarRows"></div>
       </div>
 
-      <!-- 右側時間軸甘特區 -->
       <div class="gantt-timeline" id="timelineContainer">
         <div class="timeline-header" id="timelineHeader"></div>
         <div id="timelineRows"></div>
       </div>
     </div>
+
+    <!-- 月曆視圖 -->
+    <div id="calendarView" class="calendar-container" style="display: none;">
+      <div class="calendar-month-header">
+        <button class="tab-btn" onclick="changeMonth(-1)">❮ 上一個月</button>
+        <span id="calendarMonthTitle">2026 年 11 月</span>
+        <button class="tab-btn" onclick="changeMonth(1)">下一個月 ❯</button>
+      </div>
+      <div class="calendar-grid" id="calendarGrid"></div>
+    </div>
   </div>
 
   <script>
-    // ⚠️ 請替換為您的 GAS Web App 部署網址
-    const GAS_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbxV-lxjV2EYKa4G5VFGy1nLgtUEPMwnKzNNpaq6YvnI8wCeJ31bPaiqsJaHUFoGUTGP/exec';
+    // ⚠️ 請填入您的 GAS Web App 部署網址
+    const GAS_WEB_APP_URL = 'https://script.google.com/macros/s/YOUR_EXEC_ID/exec';
 
     let scheduleData = [];
+    const DAY_WIDTH = 55; // 拓寬時間軸天數寬度
     const START_DATE = new Date('2026-10-28');
-    const TOTAL_DAYS = 42; // 展示約 6 週的時間軸範圍
+    const TOTAL_DAYS = 45; 
+    let currentCalDate = new Date('2026-11-01');
+
+    // 日期清掃函式：只保留 年-月-日 (YYYY-MM-DD)
+    function cleanDate(val) {
+      if (!val) return '';
+      const str = String(val).trim();
+      const match = str.match(/(\d{4})[\/\-](\d{1,2})[\/\-](\d{1,2})/);
+      if (match) {
+        const y = match[1];
+        const m = match[2].padStart(2, '0');
+        const d = match[3].padStart(2, '0');
+        return `${y}-${m}-${d}`;
+      }
+      return str;
+    }
 
     async function fetchData() {
       document.getElementById('loading').style.display = 'block';
       document.getElementById('ganttView').style.display = 'none';
+      document.getElementById('calendarView').style.display = 'none';
 
       try {
         const res = await fetch(GAS_WEB_APP_URL);
         const result = await res.json();
         if (result.status === 'success') {
-          scheduleData = result.data;
+          // 清掃所有日期
+          scheduleData = result.data.map(item => ({
+            ...item,
+            cutoff: cleanDate(item.cutoff),
+            etd: cleanDate(item.etd),
+            eta: cleanDate(item.eta),
+            actualEtd: cleanDate(item.actualEtd)
+          }));
           renderGantt();
+          renderCalendar();
+        } else {
+          alert('讀取失敗: ' + result.message);
         }
       } catch (err) {
-        alert('資料讀取失敗，請確認 GAS URL 是否正確公開部署。');
+        alert('資料讀取失敗，請確認 GAS URL 是否正確部署。');
         console.error(err);
       } finally {
         document.getElementById('loading').style.display = 'none';
@@ -118,6 +168,15 @@
       }
     }
 
+    function switchView(view) {
+      document.getElementById('btnGantt').classList.toggle('active', view === 'gantt');
+      document.getElementById('btnCalendar').classList.toggle('active', view === 'calendar');
+      
+      document.getElementById('ganttView').style.display = view === 'gantt' ? 'flex' : 'none';
+      document.getElementById('calendarView').style.display = view === 'calendar' ? 'block' : 'none';
+    }
+
+    /* === 甘特圖渲染邏輯 === */
     function renderGantt() {
       renderHeader();
       renderSidebar();
@@ -134,7 +193,11 @@
         const col = document.createElement('div');
         const isWeekend = (d.getDay() === 0 || d.getDay() === 6);
         col.className = `day-col ${isWeekend ? 'weekend' : ''}`;
-        col.innerHTML = `<div>${d.getMonth()+1}/${d.getDate()}</div><div style="font-size:0.65rem; color:#94a3b8;">${['日','一','二','三','四','五','六'][d.getDay()]}</div>`;
+        
+        const m = String(d.getMonth() + 1).padStart(2, '0');
+        const dateStr = String(d.getDate()).padStart(2, '0');
+        
+        col.innerHTML = `<div>${m}-${dateStr}</div>`;
         headerEl.appendChild(col);
       }
     }
@@ -149,7 +212,7 @@
         row.innerHTML = `
           <input type="checkbox" class="checkbox-custom" ${item.booked ? 'checked' : ''} onchange="toggleBooking(${item.rowIndex}, this.checked)">
           <span style="flex: 1; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="${item.vessel}">${item.vessel}</span>
-          <span style="width: 80px; text-align: right; color: #64748b; font-size: 0.75rem;">${item.cutoff ? item.cutoff.slice(5) : '-'}</span>
+          <span style="width: 100px; text-align: right; color: #64748b; font-size: 0.8rem; font-weight: 500;">${item.cutoff || '-'}</span>
         `;
         sidebarEl.appendChild(row);
       });
@@ -162,16 +225,15 @@
       scheduleData.forEach((item) => {
         const row = document.createElement('div');
         row.className = 'timeline-row';
-        row.style.width = `${TOTAL_DAYS * 40}px`;
+        row.style.width = `${TOTAL_DAYS * DAY_WIDTH}px`;
 
-        // 畫背景日線格
         for (let i = 0; i < TOTAL_DAYS; i++) {
           const bgGrid = document.createElement('div');
-          bgGrid.style.cssText = 'min-width: 40px; width: 40px; height: 100%; border-right: 1px solid #f1f5f9;';
+          bgGrid.style.cssText = `min-width: ${DAY_WIDTH}px; width: ${DAY_WIDTH}px; height: 100%; border-right: 1px solid #f1f5f9;`;
           row.appendChild(bgGrid);
         }
 
-        // 計算甘特條位置 (開船 ETD ➔ 抵港 ETA)
+        // 甘特條 (ETD -> ETA)
         if (item.etd && item.eta) {
           const etdDate = new Date(item.etd);
           const etaDate = new Date(item.eta);
@@ -185,21 +247,21 @@
             if (item.booked) speedClass = 'booked';
 
             bar.className = `gantt-bar ${speedClass}`;
-            bar.style.left = `${offsetDays * 40 + 4}px`;
-            bar.style.width = `${durationDays * 40 - 8}px`;
-            bar.innerHTML = `🚢 ${item.duration}天 (${item.etd.slice(5)} ➔ ${item.eta.slice(5)})`;
+            bar.style.left = `${offsetDays * DAY_WIDTH + 4}px`;
+            bar.style.width = `${durationDays * DAY_WIDTH - 8}px`;
+            bar.innerHTML = `🚢 ${item.vessel} (${item.duration}天 | ${item.etd} ➔ ${item.eta})`;
             row.appendChild(bar);
           }
         }
 
-        // 標註結關日點位 (Cutoff Flag)
+        // 結關紅點
         if (item.cutoff) {
           const cutoffDate = new Date(item.cutoff);
           const cutoffOffset = Math.round((cutoffDate - START_DATE) / (1000 * 60 * 60 * 24));
           if (cutoffOffset >= 0) {
             const flag = document.createElement('div');
             flag.className = 'cutoff-flag';
-            flag.style.left = `${cutoffOffset * 40 + 20}px`;
+            flag.style.left = `${cutoffOffset * DAY_WIDTH + (DAY_WIDTH / 2)}px`;
             flag.title = `結關日: ${item.cutoff}`;
             row.appendChild(flag);
           }
@@ -209,17 +271,76 @@
       });
     }
 
+    /* === 月曆視圖渲染邏輯 === */
+    function changeMonth(delta) {
+      currentCalDate.setMonth(currentCalDate.getMonth() + delta);
+      renderCalendar();
+    }
+
+    function renderCalendar() {
+      const grid = document.getElementById('calendarGrid');
+      grid.innerHTML = '';
+
+      const year = currentCalDate.getFullYear();
+      const month = currentCalDate.getMonth();
+      document.getElementById('calendarMonthTitle').innerText = `${year} 年 ${month + 1} 月`;
+
+      // 標頭 星期日 ~ 星期六
+      ['日', '一', '二', '三', '四', '五', '六'].forEach(d => {
+        const h = document.createElement('div');
+        h.className = 'cal-day-header';
+        h.innerText = `週${d}`;
+        grid.appendChild(h);
+      });
+
+      const firstDay = new Date(year, month, 1).getDay();
+      const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+      // 補前補白格
+      for (let i = 0; i < firstDay; i++) {
+        const emptyCell = document.createElement('div');
+        emptyCell.className = 'cal-cell';
+        emptyCell.style.background = '#f8fafc';
+        grid.appendChild(emptyCell);
+      }
+
+      // 渲染每天格子
+      for (let day = 1; day <= daysInMonth; day++) {
+        const cell = document.createElement('div');
+        cell.className = 'cal-cell';
+        
+        const mStr = String(month + 1).padStart(2, '0');
+        const dStr = String(day).padStart(2, '0');
+        const dateKey = `${year}-${mStr}-${dStr}`;
+
+        cell.innerHTML = `<div class="date-num">${day} 日</div>`;
+
+        // 抓取當天事件
+        scheduleData.forEach(item => {
+          if (item.cutoff === dateKey) {
+            cell.innerHTML += `<div class="cal-event event-cutoff">🚩 結關: ${item.vessel}</div>`;
+          }
+          if (item.etd === dateKey) {
+            cell.innerHTML += `<div class="cal-event event-etd">🚢 開船: ${item.vessel}</div>`;
+          }
+          if (item.eta === dateKey) {
+            cell.innerHTML += `<div class="cal-event event-eta">🛬 抵港: ${item.vessel}</div>`;
+          }
+        });
+
+        grid.appendChild(cell);
+      }
+    }
+
     async function toggleBooking(rowIndex, isBooked) {
-      // 1. 本地 UI 即時更新
       const target = scheduleData.find(d => d.rowIndex === rowIndex);
       if (target) target.booked = isBooked;
       renderGantt();
 
-      // 2. 背景非同步同步回 Google Sheet
       try {
         await fetch(GAS_WEB_APP_URL, {
           method: 'POST',
-          mode: 'no-cors', // 繞過跨網域限制寫入
+          mode: 'no-cors',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ action: 'toggleBooking', rowIndex, booked: isBooked })
         });
@@ -228,7 +349,6 @@
       }
     }
 
-    // 初始化讀取
     fetchData();
   </script>
 </body>
