@@ -58,7 +58,7 @@
     .cal-day-header { text-align: center; font-weight: 700; padding: 8px; background: #f1f5f9; border-radius: 6px; color: #475569; font-size: 0.85rem; }
     .cal-cell { min-height: 110px; background: #fff; border: 1px solid var(--border); border-radius: 8px; padding: 6px; display: flex; flex-direction: column; gap: 4px; }
     .cal-cell .date-num { font-weight: 700; font-size: 0.85rem; color: #64748b; margin-bottom: 2px; }
-    .cal-event { font-size: 0.72rem; padding: 3px 5px; border-radius: 4px; font-weight: 600; line-height: 1.2; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .cal-event { font-size: 0.72rem; padding: 4px 6px; border-radius: 4px; font-weight: 600; line-height: 1.3; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     .event-etd { background: #dbeafe; color: #1e40af; border-left: 3px solid #2563eb; }
     .event-eta { background: #dcfce7; color: #166534; border-left: 3px solid #16a34a; }
     .event-cutoff { background: #fee2e2; color: #991b1b; border-left: 3px solid #dc2626; }
@@ -77,6 +77,7 @@
     <div class="nav-tabs">
       <button class="tab-btn active" id="btnGantt" onclick="switchView('gantt')">甘特圖時間軸</button>
       <button class="tab-btn" id="btnCalendar" onclick="switchView('calendar')">月曆檢視</button>
+      <button class="tab-btn" id="btnBookedCalendar" onclick="switchView('bookedCalendar')">予約確定船便 (日文)</button>
       <button class="tab-btn" onclick="fetchData()">重新整理 🔄</button>
     </div>
   </header>
@@ -101,7 +102,7 @@
       </div>
     </div>
 
-    <!-- 月曆視圖 -->
+    <!-- 中文標準月曆視圖 -->
     <div id="calendarView" class="calendar-container" style="display: none;">
       <div class="calendar-month-header">
         <button class="tab-btn" onclick="changeMonth(-1)">❮ 上一個月</button>
@@ -110,25 +111,33 @@
       </div>
       <div class="calendar-grid" id="calendarGrid"></div>
     </div>
+
+    <!-- 日文預訂船班月曆視圖 -->
+    <div id="bookedCalendarView" class="calendar-container" style="display: none;">
+      <div class="calendar-month-header">
+        <button class="tab-btn" onclick="changeBookedMonth(-1)">❮ 前月</button>
+        <span id="bookedMonthTitle">2026 年 11 月</span>
+        <button class="tab-btn" onclick="changeBookedMonth(1)">次月 ❯</button>
+      </div>
+      <div class="calendar-grid" id="bookedCalendarGrid"></div>
+    </div>
   </div>
 
   <script>
-    // ⚠️ 請替換為您的 GAS Web App 部署網址
+    // 已直接代入您的專屬 GAS Web App 網址
     const GAS_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbxV-lxjV2EYKa4G5VFGy1nLgtUEPMwnKzNNpaq6YvnI8wCeJ31bPaiqsJaHUFoGUTGP/exec';
 
     let scheduleData = [];
     const DAY_WIDTH = 55;
     const START_DATE = new Date(2026, 9, 28); // 2026-10-28
     const TOTAL_DAYS = 45; 
-    let currentCalDate = new Date(2026, 10, 1); // 2026-11-01
+    
+    let currentCalDate = new Date(2026, 10, 1); // 中文月曆基準月
+    let currentBookedCalDate = new Date(2026, 10, 1); // 日文月曆基準月
 
-    /**
-     * 強效日期剖析器：徹底濾除時區、時間與文字
-     */
+    // 強效日期剖析器 (歸一化為 YYYY-MM-DD 與 Date 物件)
     function parseDateClean(val) {
       if (!val) return null;
-
-      // 1. 若輸入包含 YYYY-MM-DD 或 YYYY/MM/DD
       const match = String(val).match(/(\d{4})[\/\-](\d{1,2})[\/\-](\d{1,2})/);
       if (match) {
         const y = parseInt(match[1]);
@@ -140,8 +149,6 @@
           dateObj: new Date(y, m - 1, d)
         };
       }
-
-      // 2. 若為 JS Date 物件或長字串 (如 Thu Nov 05 2026...)
       const d = new Date(val);
       if (!isNaN(d.getTime())) {
         const y = d.getFullYear();
@@ -153,7 +160,6 @@
           dateObj: new Date(y, m - 1, day)
         };
       }
-
       return null;
     }
 
@@ -161,13 +167,13 @@
       document.getElementById('loading').style.display = 'block';
       document.getElementById('ganttView').style.display = 'none';
       document.getElementById('calendarView').style.display = 'none';
+      document.getElementById('bookedCalendarView').style.display = 'none';
 
       try {
         const res = await fetch(GAS_WEB_APP_URL);
         const result = await res.json();
         
         if (result.status === 'success') {
-          // 資料轉碼與日期歸一化
           scheduleData = result.data.map(item => {
             const cutoffParsed = parseDateClean(item.cutoff);
             const etdParsed = parseDateClean(item.etd);
@@ -188,6 +194,7 @@
 
           renderGantt();
           renderCalendar();
+          renderBookedCalendar();
         } else {
           alert('讀取失敗: ' + result.message);
         }
@@ -203,12 +210,25 @@
     function switchView(view) {
       document.getElementById('btnGantt').classList.toggle('active', view === 'gantt');
       document.getElementById('btnCalendar').classList.toggle('active', view === 'calendar');
+      document.getElementById('btnBookedCalendar').classList.toggle('active', view === 'bookedCalendar');
       
       document.getElementById('ganttView').style.display = view === 'gantt' ? 'flex' : 'none';
       document.getElementById('calendarView').style.display = view === 'calendar' ? 'block' : 'none';
+      document.getElementById('bookedCalendarView').style.display = view === 'bookedCalendar' ? 'block' : 'none';
     }
 
-    /* === 甘特圖視圖 === */
+    /* === 1. 甘特圖視圖 (已隱藏過期船班) === */
+    function getValidGanttData() {
+      const today = new Date();
+      today.setHours(0, 0, 0, 0); // 歸零時間部分方便純日期比較
+
+      // 僅留下「開船日 (etdDateObj)」大於或等於今天的船班
+      return scheduleData.filter(item => {
+        if (!item.etdDateObj) return true;
+        return item.etdDateObj >= today;
+      });
+    }
+
     function renderGantt() {
       renderHeader();
       renderSidebar();
@@ -238,7 +258,9 @@
       const sidebarEl = document.getElementById('sidebarRows');
       sidebarEl.innerHTML = '';
       
-      scheduleData.forEach((item) => {
+      const validData = getValidGanttData();
+      
+      validData.forEach((item) => {
         const row = document.createElement('div');
         row.className = `gantt-row ${item.booked ? 'booked-row' : ''}`;
         row.innerHTML = `
@@ -254,7 +276,9 @@
       const rowsEl = document.getElementById('timelineRows');
       rowsEl.innerHTML = '';
 
-      scheduleData.forEach((item) => {
+      const validData = getValidGanttData();
+
+      validData.forEach((item) => {
         const row = document.createElement('div');
         row.className = 'timeline-row';
         row.style.width = `${TOTAL_DAYS * DAY_WIDTH}px`;
@@ -265,7 +289,7 @@
           row.appendChild(bgGrid);
         }
 
-        // 甘特條 (以精簡格式顯示：🚢 船名 (5天 | 11/2-11/6))
+        // 甘特條 (🚢 船名 (5天 | 11/2-11/6))
         if (item.etdDateObj && item.etaDateObj) {
           const offsetDays = Math.round((item.etdDateObj - START_DATE) / (1000 * 60 * 60 * 24));
           const durationDays = Math.max(1, Math.round((item.etaDateObj - item.etdDateObj) / (1000 * 60 * 60 * 24)));
@@ -299,7 +323,7 @@
       });
     }
 
-    /* === 月曆視圖 === */
+    /* === 2. 標準中文月曆視圖 === */
     function changeMonth(delta) {
       currentCalDate.setMonth(currentCalDate.getMonth() + delta);
       renderCalendar();
@@ -313,7 +337,6 @@
       const month = currentCalDate.getMonth();
       document.getElementById('calendarMonthTitle').innerText = `${year} 年 ${month + 1} 月`;
 
-      // 星期標頭
       ['日', '一', '二', '三', '四', '五', '六'].forEach(d => {
         const h = document.createElement('div');
         h.className = 'cal-day-header';
@@ -324,7 +347,6 @@
       const firstDay = new Date(year, month, 1).getDay();
       const daysInMonth = new Date(year, month + 1, 0).getDate();
 
-      // 月前空白格
       for (let i = 0; i < firstDay; i++) {
         const emptyCell = document.createElement('div');
         emptyCell.className = 'cal-cell';
@@ -332,7 +354,6 @@
         grid.appendChild(emptyCell);
       }
 
-      // 渲染日期格與對應船班
       for (let day = 1; day <= daysInMonth; day++) {
         const cell = document.createElement('div');
         cell.className = 'cal-cell';
@@ -343,7 +364,6 @@
 
         cell.innerHTML = `<div class="date-num">${day} 日</div>`;
 
-        // 準確比對日期與卡片填入
         scheduleData.forEach(item => {
           if (item.cutoffIso === dateKey) {
             cell.innerHTML += `<div class="cal-event event-cutoff" title="結關: ${item.vessel}">🚩 結關: ${item.vessel}</div>`;
@@ -360,10 +380,81 @@
       }
     }
 
+    /* === 3. 日文版確定預訂船班月曆視圖 (Booked Only & Japanese) === */
+    function changeBookedMonth(delta) {
+      currentBookedCalDate.setMonth(currentBookedCalDate.getMonth() + delta);
+      renderBookedCalendar();
+    }
+
+    function renderBookedCalendar() {
+      const grid = document.getElementById('bookedCalendarGrid');
+      grid.innerHTML = '';
+
+      const year = currentBookedCalDate.getFullYear();
+      const month = currentBookedCalDate.getMonth();
+      document.getElementById('bookedMonthTitle').innerText = `${year}年 ${month + 1}月`;
+
+      // 日文星期抬頭 (日・月・火・水・木・金・土)
+      ['日', '月', '火', '水', '木', '金', '土'].forEach(d => {
+        const h = document.createElement('div');
+        h.className = 'cal-day-header';
+        h.innerText = `${d}曜日`;
+        grid.appendChild(h);
+      });
+
+      const firstDay = new Date(year, month, 1).getDay();
+      const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+      for (let i = 0; i < firstDay; i++) {
+        const emptyCell = document.createElement('div');
+        emptyCell.className = 'cal-cell';
+        emptyCell.style.background = '#f8fafc';
+        grid.appendChild(emptyCell);
+      }
+
+      // 過濾出僅已預訂 (booked = true) 的船班
+      const bookedItems = scheduleData.filter(item => item.booked);
+
+      for (let day = 1; day <= daysInMonth; day++) {
+        const cell = document.createElement('div');
+        cell.className = 'cal-cell';
+        
+        const mStr = String(month + 1).padStart(2, '0');
+        const dStr = String(day).padStart(2, '0');
+        const dateKey = `${year}-${mStr}-${dStr}`;
+
+        cell.innerHTML = `<div class="date-num">${day}日</div>`;
+
+        bookedItems.forEach(item => {
+          // 僅顯示出航 (ETD)
+          if (item.etdIso === dateKey) {
+            cell.innerHTML += `
+              <div class="cal-event event-etd" title="出航: ${item.vessel}">
+                🚢 出航: ${item.vessel}<br>
+                <span style="font-size: 0.68rem; font-weight: 500; opacity: 0.95;">(預計${item.duration}日後到着)</span>
+              </div>`;
+          }
+          // 僅顯示到着 (ETA)
+          if (item.etaIso === dateKey) {
+            cell.innerHTML += `
+              <div class="cal-event event-eta" title="到着: ${item.vessel}">
+                🛬 到着: ${item.vessel}
+              </div>`;
+          }
+        });
+
+        grid.appendChild(cell);
+      }
+    }
+
     async function toggleBooking(rowIndex, isBooked) {
       const target = scheduleData.find(d => d.rowIndex === rowIndex);
       if (target) target.booked = isBooked;
+      
+      // 更新所有視圖
       renderGantt();
+      renderCalendar();
+      renderBookedCalendar();
 
       try {
         await fetch(GAS_WEB_APP_URL, {
