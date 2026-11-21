@@ -45,12 +45,41 @@
     .day-col.weekend { background: #fee2e2; color: #991b1b; }
     .day-col.today-col { background: #dbeafe; color: #1d4ed8; border-bottom: 3px solid #2563eb; }
 
-    /* 甘特圖條塊 */
+    /* 甘特圖條塊（淺色底 + 深色字體，超出底色依然清晰） */
     .timeline-row { display: flex; height: 52px; border-bottom: 1px solid #e2e8f0; position: relative; align-items: center; }
-    .gantt-bar { position: absolute; height: 32px; border-radius: 6px; background: #3b82f6; color: #fff; font-size: 0.8rem; display: flex; align-items: center; padding: 0 10px; white-space: nowrap; box-shadow: 0 2px 4px rgba(0,0,0,0.1); font-weight: 600; cursor: pointer; z-index: 2; border: 1px solid rgba(0,0,0,0.1); }
-    .gantt-bar.fast { background: #10b981; }
-    .gantt-bar.slow { background: #f97316; }
-    .gantt-bar.booked { background: #eab308; color: #1e1b4b; border: 1px solid #ca8a04; }
+    .gantt-bar {
+      position: absolute;
+      height: 32px;
+      border-radius: 6px;
+      background: #dbeafe;
+      color: #0f172a;
+      border: 1.5px solid #3b82f6;
+      font-size: 0.82rem;
+      display: flex;
+      align-items: center;
+      padding: 0 10px;
+      white-space: nowrap;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+      font-weight: 700;
+      cursor: pointer;
+      z-index: 2;
+      text-shadow: 0 0 4px rgba(255, 255, 255, 0.95);
+    }
+    .gantt-bar.fast {
+      background: #dcfce7;
+      color: #0f172a;
+      border-color: #10b981;
+    }
+    .gantt-bar.slow {
+      background: #ffedd5;
+      color: #0f172a;
+      border-color: #f97316;
+    }
+    .gantt-bar.booked {
+      background: #fef08a;
+      color: #0f172a;
+      border-color: #eab308;
+    }
 
     /* 結關點位標籤 */
     .cutoff-flag { position: absolute; width: 12px; height: 12px; background: #ef4444; border-radius: 50%; z-index: 3; transform: translateX(-50%); border: 2px solid #fff; box-shadow: 0 0 4px rgba(239,68,68,0.5); }
@@ -185,7 +214,6 @@
     let confirmedData = [];
     const DAY_WIDTH = 55;
     
-    // 動態計算的甘特圖起訖時間
     let ganttStartDate = new Date();
     let ganttTotalDays = 30;
     
@@ -293,7 +321,6 @@
     /* === 1. 甘特圖：動態計算今日起點與最晚終點 === */
     function getValidGanttData() {
       const today = getTodayZero();
-      // 只要抵達日還沒過（包含今天開船、或已在海上航行中尚未抵達），就保留；已過期船班直接消失
       return scheduleData.filter(item => {
         const endRef = item.etaDateObj || item.etdDateObj;
         if (!endRef) return true;
@@ -303,10 +330,10 @@
 
     function computeDynamicGanttRange() {
       const today = getTodayZero();
-      ganttStartDate = today; // 早於今天的時間全部消失
+      ganttStartDate = today;
 
       let maxDate = new Date(today);
-      maxDate.setDate(maxDate.getDate() + 30); // 預設至少展示未來 30 天
+      maxDate.setDate(maxDate.getDate() + 30);
 
       const validData = getValidGanttData();
       validData.forEach(item => {
@@ -318,7 +345,6 @@
         }
       });
 
-      // 最晚日期之後再多留 5 天緩衝，確保 12/11 之後與所有未來日期完整顯示
       maxDate.setDate(maxDate.getDate() + 5);
       ganttTotalDays = Math.max(14, Math.round((maxDate - ganttStartDate) / (1000 * 60 * 60 * 24)) + 1);
     }
@@ -389,7 +415,6 @@
           row.appendChild(bgGrid);
         }
 
-        // 甘特條 (若已開船但未抵達，起點自動從今天開始繪製)
         if (item.etdDateObj && item.etaDateObj) {
           const rawStartOffset = Math.round((item.etdDateObj - ganttStartDate) / (1000 * 60 * 60 * 24));
           const endOffset = Math.round((item.etaDateObj - ganttStartDate) / (1000 * 60 * 60 * 24));
@@ -410,7 +435,6 @@
           }
         }
 
-        // 結關紅點 (早於今天不顯示)
         if (item.cutoffDateObj) {
           const cutoffOffset = Math.round((item.cutoffDateObj - ganttStartDate) / (1000 * 60 * 60 * 24));
           if (cutoffOffset >= 0) {
