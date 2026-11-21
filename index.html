@@ -7,6 +7,7 @@
   <style>
     :root {
       --primary: #2563eb;
+      --brand-green: #8fbc26;
       --bg: #f8fafc;
       --card-bg: #ffffff;
       --border: #cbd5e1;
@@ -17,12 +18,14 @@
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
     body { background-color: var(--bg); color: var(--text); padding: 20px; }
 
-    header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; background: var(--card-bg); padding: 16px 24px; border-radius: 12px; border: 1px solid var(--border); box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+    header { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 20px; background: var(--card-bg); padding: 16px 24px; border-radius: 12px; border: 1px solid var(--border); box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
     h1 { font-size: 1.3rem; font-weight: 700; color: #0f172a; }
     
-    .nav-tabs { display: flex; gap: 8px; }
-    .tab-btn { padding: 8px 16px; border: 1px solid var(--border); background: #fff; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 0.9rem; transition: all 0.2s; }
+    .nav-tabs { display: flex; flex-wrap: wrap; gap: 8px; }
+    .tab-btn { padding: 8px 16px; border: 1px solid var(--border); background: #fff; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 0.9rem; transition: all 0.2s; color: #334155; }
+    .tab-btn:hover { background: #f1f5f9; }
     .tab-btn.active { background: var(--primary); color: #fff; border-color: var(--primary); }
+    .tab-btn.active-green { background: var(--brand-green); color: #fff; border-color: var(--brand-green); }
 
     .container { background: var(--card-bg); border-radius: 12px; border: 1px solid var(--border); overflow: hidden; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); }
 
@@ -40,6 +43,7 @@
     .timeline-header { display: flex; height: 50px; background: #f1f5f9; border-bottom: 2px solid var(--border); }
     .day-col { min-width: 55px; width: 55px; text-align: center; font-size: 0.8rem; border-right: 1px solid #e2e8f0; display: flex; flex-direction: column; justify-content: center; font-weight: 600; }
     .day-col.weekend { background: #fee2e2; color: #991b1b; }
+    .day-col.today-col { background: #dbeafe; color: #1d4ed8; border-bottom: 3px solid #2563eb; }
 
     /* 甘特圖條塊 */
     .timeline-row { display: flex; height: 52px; border-bottom: 1px solid #e2e8f0; position: relative; align-items: center; }
@@ -63,6 +67,24 @@
     .event-eta { background: #dcfce7; color: #166534; border-left: 3px solid #16a34a; }
     .event-cutoff { background: #fee2e2; color: #991b1b; border-left: 3px solid #dc2626; }
 
+    /* 確定船班作業追蹤頁籤 */
+    .confirmed-container { padding: 24px; }
+    .confirmed-toolbar { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 16px; }
+    .search-input { padding: 8px 14px; border: 1px solid var(--border); border-radius: 8px; font-size: 0.9rem; width: 280px; outline: none; }
+    .search-input:focus { border-color: var(--brand-green); }
+    
+    .table-scroll { overflow-x: auto; border: 1px solid #e2e8f0; border-radius: 10px; }
+    .conf-table { width: 100%; border-collapse: collapse; font-size: 0.86rem; text-align: left; white-space: nowrap; }
+    .conf-table th { background: #f1f5f9; color: #334155; font-weight: 700; padding: 12px 14px; border-bottom: 2px solid var(--border); }
+    .conf-table td { padding: 12px 14px; border-bottom: 1px solid #e2e8f0; vertical-align: middle; }
+    .conf-table tr:hover { background: #f8fafc; }
+    
+    .highlight-stuffing { background: #fef9c3; color: #854d0e; font-weight: 700; padding: 4px 8px; border-radius: 6px; display: inline-block; border: 1px solid #fde047; }
+    .badge { padding: 4px 8px; border-radius: 999px; font-size: 0.76rem; font-weight: 600; display: inline-block; }
+    .badge-done { background: #dcfce7; color: #166534; border: 1px solid #86efac; }
+    .badge-pending { background: #f1f5f9; color: #64748b; border: 1px solid #cbd5e1; }
+    .badge-port { background: #e0f2fe; color: #0369a1; font-weight: 700; }
+
     .loading-overlay { padding: 50px; text-align: center; color: #64748b; font-size: 1rem; }
     .checkbox-custom { width: 18px; height: 18px; cursor: pointer; }
   </style>
@@ -71,21 +93,22 @@
 
   <header>
     <div>
-      <h1>高雄 ➔ 大阪 船班動態甘特排程</h1>
-      <p style="font-size: 0.8rem; color: #64748b; margin-top: 2px;">資料來源：Google Sheet [RAW OSAKA]</p>
+      <h1>高雄 ➔ 大阪 船班動態排程與作業看板</h1>
+      <p style="font-size: 0.8rem; color: #64748b; margin-top: 2px;">即時連線：Google Sheet [RAW OSAKA] & [確定船班]</p>
     </div>
     <div class="nav-tabs">
       <button class="tab-btn active" id="btnGantt" onclick="switchView('gantt')">甘特圖時間軸</button>
       <button class="tab-btn" id="btnCalendar" onclick="switchView('calendar')">月曆檢視</button>
       <button class="tab-btn" id="btnBookedCalendar" onclick="switchView('bookedCalendar')">予約確定船便 (日文)</button>
+      <button class="tab-btn" id="btnConfirmed" onclick="switchView('confirmed')">確定船班 (作業追蹤)</button>
       <button class="tab-btn" onclick="fetchData()">重新整理 🔄</button>
     </div>
   </header>
 
   <div class="container">
-    <div id="loading" class="loading-overlay">載入最新船班資料中...</div>
+    <div id="loading" class="loading-overlay">載入最新船班與作業資料中...</div>
 
-    <!-- 甘特圖視圖 -->
+    <!-- 1. 甘特圖視圖 -->
     <div id="ganttView" class="gantt-wrapper" style="display: none;">
       <div class="gantt-sidebar">
         <div class="row-header">
@@ -102,7 +125,7 @@
       </div>
     </div>
 
-    <!-- 中文標準月曆視圖 -->
+    <!-- 2. 中文標準月曆視圖 -->
     <div id="calendarView" class="calendar-container" style="display: none;">
       <div class="calendar-month-header">
         <button class="tab-btn" onclick="changeMonth(-1)">❮ 上一個月</button>
@@ -112,7 +135,7 @@
       <div class="calendar-grid" id="calendarGrid"></div>
     </div>
 
-    <!-- 日文預訂船班月曆視圖 -->
+    <!-- 3. 日文預訂船班月曆視圖 -->
     <div id="bookedCalendarView" class="calendar-container" style="display: none;">
       <div class="calendar-month-header">
         <button class="tab-btn" onclick="changeBookedMonth(-1)">❮ 前月</button>
@@ -121,21 +144,61 @@
       </div>
       <div class="calendar-grid" id="bookedCalendarGrid"></div>
     </div>
+
+    <!-- 4. 確定船班作業追蹤視圖 -->
+    <div id="confirmedView" class="confirmed-container" style="display: none;">
+      <div class="confirmed-toolbar">
+        <div>
+          <h2 style="font-size: 1.1rem; color: #0f172a;">確定船班與報關裝櫃進度表</h2>
+          <p style="font-size: 0.8rem; color: #64748b; margin-top: 2px;">同步自 Google Sheet「確定船班」分頁，自動標示裝櫃時間與文件狀態</p>
+        </div>
+        <input type="text" id="confirmedSearch" class="search-input" placeholder="搜尋船班、櫃次、SO、港口..." oninput="renderConfirmedTable()">
+      </div>
+      <div class="table-scroll">
+        <table class="conf-table">
+          <thead>
+            <tr>
+              <th>船班</th>
+              <th>櫃次</th>
+              <th>結關日</th>
+              <th>實際開船時間</th>
+              <th style="background: #fef08a; color: #713f12;">裝櫃時間</th>
+              <th>抵達港口</th>
+              <th>抵達日</th>
+              <th>SO</th>
+              <th>申請檢疫官到場時間</th>
+              <th>藥務號</th>
+              <th>電放單</th>
+              <th>裝櫃完成</th>
+            </tr>
+          </thead>
+          <tbody id="confirmedTableBody"></tbody>
+        </table>
+      </div>
+    </div>
   </div>
 
   <script>
-    // 已直接代入您的專屬 GAS Web App 網址
     const GAS_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbxV-lxjV2EYKa4G5VFGy1nLgtUEPMwnKzNNpaq6YvnI8wCeJ31bPaiqsJaHUFoGUTGP/exec';
 
     let scheduleData = [];
+    let confirmedData = [];
     const DAY_WIDTH = 55;
-    const START_DATE = new Date(2026, 9, 28); // 2026-10-28
-    const TOTAL_DAYS = 45; 
     
-    let currentCalDate = new Date(2026, 10, 1); // 中文月曆基準月
-    let currentBookedCalDate = new Date(2026, 10, 1); // 日文月曆基準月
+    // 動態計算的甘特圖起訖時間
+    let ganttStartDate = new Date();
+    let ganttTotalDays = 30;
+    
+    let currentCalDate = new Date();
+    let currentBookedCalDate = new Date();
+    let activeView = 'gantt';
 
-    // 強效日期剖析器 (歸一化為 YYYY-MM-DD 與 Date 物件)
+    function getTodayZero() {
+      const t = new Date();
+      t.setHours(0, 0, 0, 0);
+      return t;
+    }
+
     function parseDateClean(val) {
       if (!val) return null;
       const match = String(val).match(/(\d{4})[\/\-](\d{1,2})[\/\-](\d{1,2})/);
@@ -168,13 +231,14 @@
       document.getElementById('ganttView').style.display = 'none';
       document.getElementById('calendarView').style.display = 'none';
       document.getElementById('bookedCalendarView').style.display = 'none';
+      document.getElementById('confirmedView').style.display = 'none';
 
       try {
         const res = await fetch(GAS_WEB_APP_URL);
         const result = await res.json();
         
         if (result.status === 'success') {
-          scheduleData = result.data.map(item => {
+          scheduleData = (result.data || []).map(item => {
             const cutoffParsed = parseDateClean(item.cutoff);
             const etdParsed = parseDateClean(item.etd);
             const etaParsed = parseDateClean(item.eta);
@@ -192,41 +256,71 @@
             };
           });
 
+          confirmedData = result.confirmedData || [];
+
+          computeDynamicGanttRange();
           renderGantt();
           renderCalendar();
           renderBookedCalendar();
+          renderConfirmedTable();
         } else {
           alert('讀取失敗: ' + result.message);
         }
       } catch (err) {
-        alert('資料讀取失敗，請確認 GAS URL 是否正確部署。');
+        alert('資料讀取失敗，請確認 GAS 是否已部署為「新版本」。');
         console.error(err);
       } finally {
         document.getElementById('loading').style.display = 'none';
-        document.getElementById('ganttView').style.display = 'flex';
+        switchView(activeView);
       }
     }
 
     function switchView(view) {
+      activeView = view;
       document.getElementById('btnGantt').classList.toggle('active', view === 'gantt');
       document.getElementById('btnCalendar').classList.toggle('active', view === 'calendar');
       document.getElementById('btnBookedCalendar').classList.toggle('active', view === 'bookedCalendar');
       
+      const btnConf = document.getElementById('btnConfirmed');
+      btnConf.classList.toggle('active-green', view === 'confirmed');
+      
       document.getElementById('ganttView').style.display = view === 'gantt' ? 'flex' : 'none';
       document.getElementById('calendarView').style.display = view === 'calendar' ? 'block' : 'none';
       document.getElementById('bookedCalendarView').style.display = view === 'bookedCalendar' ? 'block' : 'none';
+      document.getElementById('confirmedView').style.display = view === 'confirmed' ? 'block' : 'none';
     }
 
-    /* === 1. 甘特圖視圖 (已隱藏過期船班) === */
+    /* === 1. 甘特圖：動態計算今日起點與最晚終點 === */
     function getValidGanttData() {
-      const today = new Date();
-      today.setHours(0, 0, 0, 0); // 歸零時間部分方便純日期比較
-
-      // 僅留下「開船日 (etdDateObj)」大於或等於今天的船班
+      const today = getTodayZero();
+      // 只要抵達日還沒過（包含今天開船、或已在海上航行中尚未抵達），就保留；已過期船班直接消失
       return scheduleData.filter(item => {
-        if (!item.etdDateObj) return true;
-        return item.etdDateObj >= today;
+        const endRef = item.etaDateObj || item.etdDateObj;
+        if (!endRef) return true;
+        return endRef >= today;
       });
+    }
+
+    function computeDynamicGanttRange() {
+      const today = getTodayZero();
+      ganttStartDate = today; // 早於今天的時間全部消失
+
+      let maxDate = new Date(today);
+      maxDate.setDate(maxDate.getDate() + 30); // 預設至少展示未來 30 天
+
+      const validData = getValidGanttData();
+      validData.forEach(item => {
+        if (item.etaDateObj && item.etaDateObj > maxDate) {
+          maxDate = new Date(item.etaDateObj);
+        }
+        if (item.etdDateObj && item.etdDateObj > maxDate) {
+          maxDate = new Date(item.etdDateObj);
+        }
+      });
+
+      // 最晚日期之後再多留 5 天緩衝，確保 12/11 之後與所有未來日期完整顯示
+      maxDate.setDate(maxDate.getDate() + 5);
+      ganttTotalDays = Math.max(14, Math.round((maxDate - ganttStartDate) / (1000 * 60 * 60 * 24)) + 1);
     }
 
     function renderGantt() {
@@ -238,18 +332,20 @@
     function renderHeader() {
       const headerEl = document.getElementById('timelineHeader');
       headerEl.innerHTML = '';
-      for (let i = 0; i < TOTAL_DAYS; i++) {
-        const d = new Date(START_DATE);
+      for (let i = 0; i < ganttTotalDays; i++) {
+        const d = new Date(ganttStartDate);
         d.setDate(d.getDate() + i);
         
         const col = document.createElement('div');
         const isWeekend = (d.getDay() === 0 || d.getDay() === 6);
-        col.className = `day-col ${isWeekend ? 'weekend' : ''}`;
+        const isToday = (i === 0);
+        col.className = `day-col ${isWeekend ? 'weekend' : ''} ${isToday ? 'today-col' : ''}`;
         
         const m = String(d.getMonth() + 1).padStart(2, '0');
         const dateStr = String(d.getDate()).padStart(2, '0');
+        const weekChar = ['日','一','二','三','四','五','六'][d.getDay()];
         
-        col.innerHTML = `<div>${m}-${dateStr}</div>`;
+        col.innerHTML = `<div>${m}-${dateStr}</div><div style="font-size:0.68rem;opacity:0.8;">${isToday ? '今天' : weekChar}</div>`;
         headerEl.appendChild(col);
       }
     }
@@ -259,6 +355,10 @@
       sidebarEl.innerHTML = '';
       
       const validData = getValidGanttData();
+      if (validData.length === 0) {
+        sidebarEl.innerHTML = `<div style="padding: 20px; color: #64748b; font-size: 0.85rem;">目前無未過期船班</div>`;
+        return;
+      }
       
       validData.forEach((item) => {
         const row = document.createElement('div');
@@ -281,35 +381,38 @@
       validData.forEach((item) => {
         const row = document.createElement('div');
         row.className = 'timeline-row';
-        row.style.width = `${TOTAL_DAYS * DAY_WIDTH}px`;
+        row.style.width = `${ganttTotalDays * DAY_WIDTH}px`;
 
-        for (let i = 0; i < TOTAL_DAYS; i++) {
+        for (let i = 0; i < ganttTotalDays; i++) {
           const bgGrid = document.createElement('div');
           bgGrid.style.cssText = `min-width: ${DAY_WIDTH}px; width: ${DAY_WIDTH}px; height: 100%; border-right: 1px solid #f1f5f9;`;
           row.appendChild(bgGrid);
         }
 
-        // 甘特條 (🚢 船名 (5天 | 11/2-11/6))
+        // 甘特條 (若已開船但未抵達，起點自動從今天開始繪製)
         if (item.etdDateObj && item.etaDateObj) {
-          const offsetDays = Math.round((item.etdDateObj - START_DATE) / (1000 * 60 * 60 * 24));
-          const durationDays = Math.max(1, Math.round((item.etaDateObj - item.etdDateObj) / (1000 * 60 * 60 * 24)));
+          const rawStartOffset = Math.round((item.etdDateObj - ganttStartDate) / (1000 * 60 * 60 * 24));
+          const endOffset = Math.round((item.etaDateObj - ganttStartDate) / (1000 * 60 * 60 * 24));
+          
+          const visibleStart = Math.max(0, rawStartOffset);
+          const visibleSpan = Math.max(1, endOffset - visibleStart);
 
-          if (offsetDays >= 0) {
+          if (endOffset >= 0) {
             const bar = document.createElement('div');
             let speedClass = item.duration <= 4 ? 'fast' : (item.duration >= 6 ? 'slow' : '');
             if (item.booked) speedClass = 'booked';
 
             bar.className = `gantt-bar ${speedClass}`;
-            bar.style.left = `${offsetDays * DAY_WIDTH + 4}px`;
-            bar.style.width = `${durationDays * DAY_WIDTH - 8}px`;
+            bar.style.left = `${visibleStart * DAY_WIDTH + 4}px`;
+            bar.style.width = `${visibleSpan * DAY_WIDTH - 8}px`;
             bar.innerHTML = `🚢 ${item.vessel} (${item.duration}天 | ${item.etdShort}-${item.etaShort})`;
             row.appendChild(bar);
           }
         }
 
-        // 結關紅點
+        // 結關紅點 (早於今天不顯示)
         if (item.cutoffDateObj) {
-          const cutoffOffset = Math.round((item.cutoffDateObj - START_DATE) / (1000 * 60 * 60 * 24));
+          const cutoffOffset = Math.round((item.cutoffDateObj - ganttStartDate) / (1000 * 60 * 60 * 24));
           if (cutoffOffset >= 0) {
             const flag = document.createElement('div');
             flag.className = 'cutoff-flag';
@@ -380,7 +483,7 @@
       }
     }
 
-    /* === 3. 日文版確定預訂船班月曆視圖 (Booked Only & Japanese) === */
+    /* === 3. 日文版確定預訂船班月曆視圖 === */
     function changeBookedMonth(delta) {
       currentBookedCalDate.setMonth(currentBookedCalDate.getMonth() + delta);
       renderBookedCalendar();
@@ -394,7 +497,6 @@
       const month = currentBookedCalDate.getMonth();
       document.getElementById('bookedMonthTitle').innerText = `${year}年 ${month + 1}月`;
 
-      // 日文星期抬頭 (日・月・火・水・木・金・土)
       ['日', '月', '火', '水', '木', '金', '土'].forEach(d => {
         const h = document.createElement('div');
         h.className = 'cal-day-header';
@@ -412,7 +514,6 @@
         grid.appendChild(emptyCell);
       }
 
-      // 過濾出僅已預訂 (booked = true) 的船班
       const bookedItems = scheduleData.filter(item => item.booked);
 
       for (let day = 1; day <= daysInMonth; day++) {
@@ -426,15 +527,13 @@
         cell.innerHTML = `<div class="date-num">${day}日</div>`;
 
         bookedItems.forEach(item => {
-          // 僅顯示出航 (ETD)
           if (item.etdIso === dateKey) {
             cell.innerHTML += `
               <div class="cal-event event-etd" title="出航: ${item.vessel}">
                 🚢 出航: ${item.vessel}<br>
-                <span style="font-size: 0.68rem; font-weight: 500; opacity: 0.95;">(預計${item.duration}日後到着)</span>
+                <span style="font-size: 0.68rem; font-weight: 500; opacity: 0.95;">(予定${item.duration}日後到着)</span>
               </div>`;
           }
-          // 僅顯示到着 (ETA)
           if (item.etaIso === dateKey) {
             cell.innerHTML += `
               <div class="cal-event event-eta" title="到着: ${item.vessel}">
@@ -447,11 +546,57 @@
       }
     }
 
+    /* === 4. 確定船班作業追蹤視圖 === */
+    function formatStatusBadge(val, doneLabel, pendingLabel) {
+      if (val === true || String(val).toUpperCase() === 'TRUE' || String(val).trim() === '完成' || String(val).trim() === '已電放' || String(val).trim() === 'OK' || String(val).trim() === 'V' || String(val).trim() === '✓') {
+        return `<span class="badge badge-done">✓ ${typeof val === 'string' && val.toUpperCase() !== 'TRUE' ? val : doneLabel}</span>`;
+      }
+      if (val && String(val).trim() !== '' && val !== false && String(val).toUpperCase() !== 'FALSE') {
+        return `<span class="badge badge-done">${val}</span>`;
+      }
+      return `<span class="badge badge-pending">${pendingLabel}</span>`;
+    }
+
+    function renderConfirmedTable() {
+      const tbody = document.getElementById('confirmedTableBody');
+      const keyword = (document.getElementById('confirmedSearch')?.value || '').toLowerCase().trim();
+      tbody.innerHTML = '';
+
+      const filtered = confirmedData.filter(item => {
+        if (!keyword) return true;
+        return [item.vessel, item.containerNo, item.so, item.pod, item.phytoNo]
+          .some(field => String(field || '').toLowerCase().includes(keyword));
+      });
+
+      if (filtered.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="12" style="text-align:center; padding: 36px; color: #64748b;">目前「確定船班」分頁尚無資料，或無符合搜尋條件的項目</td></tr>`;
+        return;
+      }
+
+      filtered.forEach(item => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td style="font-weight: 700; color: #0f172a;">🚢 ${item.vessel || '-'}</td>
+          <td style="font-weight: 600; color: #334155;">${item.containerNo || '-'}</td>
+          <td style="color: #dc2626; font-weight: 600;">${item.cutoff || '-'}</td>
+          <td>${item.actualEtd || '-'}</td>
+          <td>${item.stuffingTime ? `<span class="highlight-stuffing">📦 ${item.stuffingTime}</span>` : '-'}</td>
+          <td>${item.pod ? `<span class="badge badge-port">${item.pod}</span>` : '-'}</td>
+          <td style="font-weight: 600; color: #166534;">${item.eta || '-'}</td>
+          <td style="font-family: monospace; font-size: 0.9rem; font-weight: 600;">${item.so || '-'}</td>
+          <td style="color: #1d4ed8; font-weight: 500;">${item.quarantineTime || '-'}</td>
+          <td style="font-family: monospace;">${item.phytoNo || '-'}</td>
+          <td>${formatStatusBadge(item.telexRelease, '已電放', '未電放')}</td>
+          <td>${formatStatusBadge(item.stuffingDone, '裝櫃完成', '待裝櫃')}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
     async function toggleBooking(rowIndex, isBooked) {
       const target = scheduleData.find(d => d.rowIndex === rowIndex);
       if (target) target.booked = isBooked;
       
-      // 更新所有視圖
       renderGantt();
       renderCalendar();
       renderBookedCalendar();
